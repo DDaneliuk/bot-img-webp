@@ -49,10 +49,13 @@ bot.onText(/Convert/, async (msg) => {
 
 bot.on('photo', async (msg) => {
     console.log("msg", msg)
-    await bot.sendMessage(msg.chat.id, "image/png");
     // here I'm getting the file url
     const fileURL = await bot.getFileLink(msg.photo[2].file_id);
-    await download(msg.photo[2], fileURL)
+    const getFileInfo = await bot.getFile(msg.photo[2].file_id);
+    const fileName = getFileInfo.file_path.replace(/\b\w+\//, '') // photo/image.png - replace photo
+    console.log("link", fileURL)
+    console.log("getFileName", fileName)
+    await download(msg.photo[2], fileURL, fileName)
 })
 
 bot.on('document', async (msg) => {
