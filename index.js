@@ -12,7 +12,7 @@ const token = '5572752409:AAGwCEzpWBpcYDM_5XIxSnD8Gp3z1v44k_M'
 
 let port = process.env.PORT || 443
 let host = '0.0.0.0',  // probably this change is not required
-    externalUrl = process.env.CUSTOM_ENV_VARIABLE || 'https://my-app.herokuapp.com',
+    externalUrl = process.env.CUSTOM_ENV_VARIABLE || 'https://bot-webp.herokuapp.com/',
     bot = new TelegramBot(token, { webHook: { port : port, host : host } });
 bot.setWebHook(externalUrl + ':443/bot' + token);
 
