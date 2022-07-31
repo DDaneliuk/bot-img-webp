@@ -2,6 +2,8 @@ const TelegramBot = require('node-telegram-bot-api')
 // helpers
 const download = require('./helpers/download/index')
 const checkDir = require("./helpers/check-dir");
+const convert = require("./helpers/convert");
+const cleanDirs = require("./helpers/clean-dirs");
 
 const token = '5572752409:AAGwCEzpWBpcYDM_5XIxSnD8Gp3z1v44k_M'
 
@@ -33,28 +35,32 @@ bot.on('callback_query', (callbackQuery) => {
     console.log("callbackQuery", callbackQuery)
     const message = callbackQuery.message;
     const data = callbackQuery.callback_data;
-    console.log('data', data)
 });
 
 // Handle callback queries
 bot.onText(/Convert/, async (msg) => {
     let isDirEmpty = await checkDir()
+    console.log('[!] isDirEmpty', isDirEmpty)
     if (isDirEmpty){
-        bot.sendMessage(msg.from.id, "Sorry, send me a few images first!");
+        await bot.sendMessage(msg.from.id, "Sorry, send me a few images first!");
     } else{
-        bot.sendMessage(msg.from.id, "Bear with me while I converting files...");
+        await bot.sendMessage(msg.from.id, "Bear with me while I converting files...");
+        await convert()
+        const keyboardOpts = {
+            reply_markup: {
+                remove_keyboard: true,
+            }
+        };
+        await bot.sendMessage(msg.from.id, "Converted!", keyboardOpts);
+        await bot.sendPhoto(msg.from.id, "photo.jpg");
     }
-    console.log(isDirEmpty, 'await checkDir()')
 });
 
 bot.on('photo', async (msg) => {
-    console.log("msg", msg)
     // here I'm getting the file url
     const fileURL = await bot.getFileLink(msg.photo[2].file_id);
     const getFileInfo = await bot.getFile(msg.photo[2].file_id);
     const fileName = getFileInfo.file_path.replace(/\b\w+\//, '') // photo/image.png - replace photo
-    console.log("link", fileURL)
-    console.log("getFileName", fileName)
     await download(msg.photo[2], fileURL, fileName)
 })
 

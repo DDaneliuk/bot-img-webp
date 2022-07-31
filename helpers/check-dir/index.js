@@ -1,22 +1,18 @@
-const fs = require('fs');
+const fs = require('fs')
+const dirname = './upload'
 
-async function checkDir(document, fileURL){
-    console.log('start checking dir...')
-    let isEmpty = true
-    const dirname = './upload'
-    fs.readdir(dirname, function(err, files) {
-        if (err) {
-           console.log("Error when checking error", err)
-        } else {
-            if (!files.length) {
-                isEmpty = true
-                console.log("Dir is empty")
-            }
-            else {
-                isEmpty = false
-            }
-        }
-    });
+async function checkDir(){
+    console.log('[+] Start checking dir')
+    let isEmpty
+    let checkDir = fs.readdirSync(dirname)
+    if (!checkDir.length) {
+        isEmpty = true
+        console.log("[-] Dir is empty")
+    } else {
+        isEmpty = false
+        console.log("[+] Files in dir:", checkDir.length)
+    }
     return isEmpty
 }
+
 module.exports = checkDir;

@@ -20,6 +20,7 @@
   "homepage": "https://github.com/DDaneliuk/bot-img-webp#readme",
   "dependencies": {
     "node-telegram-bot-api": "^0.58.0",
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.19",
+    "sharp": "^0.30.7"
   }
 }
