@@ -4,6 +4,9 @@ const download = require('./helpers/download/index')
 const checkDir = require("./helpers/check-dir");
 const convert = require("./helpers/convert");
 const cleanDirs = require("./helpers/clean-dirs");
+const fs = require("fs");
+
+const convertedFolder = './res/';
 
 const token = '5572752409:AAGwCEzpWBpcYDM_5XIxSnD8Gp3z1v44k_M'
 
@@ -11,7 +14,7 @@ const bot = new TelegramBot(token, { polling: true })
 
 // command start
 bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, "Welcome.\nTo start send one or more images or just send archive");
+    bot.sendMessage(msg.chat.id, "Welcome.\nTo start send one or more images or just send archive\n/images");
 });
 
 // Matches /images
@@ -52,14 +55,19 @@ bot.onText(/Convert/, async (msg) => {
             }
         };
         await bot.sendMessage(msg.from.id, "Converted!", keyboardOpts);
-        await bot.sendPhoto(msg.from.id, "photo.jpg");
+        let convertedDir = fs.readdirSync(convertedFolder)
+        convertedDir.forEach((img) =>{
+            bot.sendPhoto(msg.from.id, `${convertedFolder}${img}`);
+        })
+        await cleanDirs()
+        await bot.sendMessage(msg.from.id, "Convert again\n/images");
     }
 });
 
 bot.on('photo', async (msg) => {
     // here I'm getting the file url
-    const fileURL = await bot.getFileLink(msg.photo[2].file_id);
-    const getFileInfo = await bot.getFile(msg.photo[2].file_id);
+    const fileURL = await bot.getFileLink(msg.photo[msg.photo.length - 1].file_id);
+    const getFileInfo = await bot.getFile(msg.photo[msg.photo.length - 1].file_id);
     const fileName = getFileInfo.file_path.replace(/\b\w+\//, '') // photo/image.png - replace photo
     await download(msg.photo[2], fileURL, fileName)
 })
